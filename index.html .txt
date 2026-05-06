@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INERESS TIDO SARL</title>
+
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+
+<style>
+body {font-family: Arial;margin:0;background:#f1f1f1;}
+
+/* HEADER */
+header {
+    background:#131921;
+    color:white;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.search {
+    width:90%;
+    padding:10px;
+    border:none;
+    border-radius:5px;
+}
+
+/* MENU */
+.menu {
+    display:flex;
+    overflow:auto;
+    background:#232f3e;
+}
+
+.menu button {
+    background:none;
+    color:white;
+    border:none;
+    padding:10px;
+}
+
+/* PRODUITS */
+.container {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.produit {
+    background:white;
+    margin:10px;
+    padding:10px;
+    width:200px;
+    border-radius:10px;
+    position:relative;
+}
+
+.produit img {
+    width:100%;
+}
+
+/* BADGE */
+.badge {
+    position:absolute;
+    top:5px;
+    left:5px;
+    background:red;
+    color:white;
+    padding:3px;
+    font-size:10px;
+}
+
+/* PANIER */
+.panier {
+    position:fixed;
+    bottom:10px;
+    right:10px;
+    background:black;
+    color:white;
+    padding:10px;
+    border-radius:50px;
+}
+
+/* POPUP */
+.popup {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:white;
+    display:none;
+    padding:20px;
+}
+</style>
+
+<script>
+let panier = [];
+let produits = [
+{nom:"iPhone 13", prix:350000, cat:"iphone", img:"https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-13-01.jpg", badge:"🔥 Promo"},
+{nom:"Samsung S21", prix:300000, cat:"samsung", img:"https://fdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-s21-5g-1.jpg", badge:"Nouveau"},
+{nom:"Batterie iPhone", prix:15000, cat:"accessoire", img:"https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-13-01.jpg"}
+];
+
+function afficherProduits(liste){
+    let html="";
+    liste.forEach(p=>{
+        html+=`
+        <div class="produit">
+            ${p.badge ? `<div class="badge">${p.badge}</div>`:""}
+            <img src="${p.img}">
+            <h4>${p.nom}</h4>
+            <p>${p.prix} FCFA</p>
+            <button onclick="add('${p.nom}',${p.prix})">Ajouter</button>
+        </div>`;
+    });
+    document.getElementById("produits").innerHTML = html;
+}
+
+function add(nom, prix){
+    panier.push({nom, prix});
+    document.getElementById("count").innerText = panier.length;
+}
+
+function filtrer(cat){
+    if(cat==="all") afficherProduits(produits);
+    else afficherProduits(produits.filter(p=>p.cat===cat));
+}
+
+function rechercher(){
+    let val = document.getElementById("search").value.toLowerCase();
+    afficherProduits(produits.filter(p=>p.nom.toLowerCase().includes(val)));
+}
+
+function commander(){
+    let msg="Commande:%0A";
+    panier.forEach(p=>{
+        msg+=p.nom+" "+p.prix+" FCFA%0A";
+    });
+    window.open("https://wa.me/237659330336?text="+msg);
+}
+
+window.onload = ()=> afficherProduits(produits);
+</script>
+
+</head>
+
+<body>
+
+<header>
+<h2>🛒 INERESS TIDO SARL</h2>
+<input id="search" class="search" placeholder="Rechercher..." onkeyup="rechercher()">
+</header>
+
+<div class="menu">
+<button onclick="filtrer('all')">Tous</button>
+<button onclick="filtrer('iphone')">iPhone</button>
+<button onclick="filtrer('samsung')">Samsung</button>
+<button onclick="filtrer('accessoire')">Accessoires</button>
+</div>
+
+<div id="produits" class="container"></div>
+
+<div class="panier" onclick="commander()">
+🛒 <span id="count">0</span>
+</div>
+
+</body>
+</html>
